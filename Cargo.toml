@@ -22,3 +22,7 @@ test-timeout = 5
 [[test]]
 name = "should_panic"
 harness = false# (in seconds)
+
+[[test]]
+name = "stack_overflow"
+harness = false
