@@ -35,6 +35,9 @@ fn panic(info: &PanicInfo) -> !{
     test_main();
 
     println!("It did not crash!");
-    loop {}
+    loop {
+        use blog_os::print;
+        print!("-");
+    }
  }
 
