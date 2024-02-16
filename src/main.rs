@@ -16,7 +16,7 @@ pub trait Testable {
 #[panic_handler]
 fn panic(info: &PanicInfo) -> !{
     println!("{}", info);
-    loop {}
+    blog_os::hlt_loop();
 }
 
 #[cfg(test)]
@@ -35,9 +35,6 @@ fn panic(info: &PanicInfo) -> !{
     test_main();
 
     println!("It did not crash!");
-    loop {
-        use blog_os::print;
-        print!("-");
-    }
+    blog_os::hlt_loop();
  }
 
