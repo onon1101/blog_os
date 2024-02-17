@@ -14,6 +14,7 @@ pub static PICS: spin::Mutex<ChainedPics> = spin::Mutex::new(unsafe { ChainedPic
 #[repr(u8)]
 pub enum InterruptIndex {
     Timer = PIC_1_OFFSET,
+    Keyborad,
 }
 
 impl InterruptIndex {
@@ -37,6 +38,9 @@ lazy_static! {
         }
         idt[InterruptIndex::Timer.as_usize()]
             .set_handler_fn(timer_interrupt_handler);
+        idt[InterruptIndex::Keyborad.as_usize()]
+            .set_handler_fn(keyborad_interrupt_handler);
+        
         idt
     };
 }
@@ -67,4 +71,15 @@ extern "x86-interrupt" fn double_fault_handler(stack_frame: InterruptStackFrame,
 #[test_case]
 fn test_breakpoint_exception() {
     x86_64::instructions::interrupts::int3();
+}
+
+//keyborad 
+extern "x86-interrupt" fn keyborad_interrupt_handler(_stack_frame: InterruptStackFrame) {
+    use x86_64::instructions::port::Port;
+
+    let mut port = Port::new(0x60);
+    let scancode: u8 = unsafe { port.read() };
+    print!("{}", scancode);
+
+    unsafe { PICS.lock().notify_end_of_interrupt(InterruptIndex::Keyborad.as_u8()); }
 }
